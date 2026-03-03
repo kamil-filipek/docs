@@ -38,7 +38,7 @@ Before starting deployment, ensure you have completed all requirements:
 - [ ] **Helm Installed**: Helm 3.16.0+ installed on deployment machine
 - [ ] **Repository Cloned**: `codemie-helm-charts` repository available locally
 - [ ] **Domain Configured**: Know your CodeMie domain name from infrastructure outputs
-- [ ] **Deployment Outputs**: Have `deployment_outputs.env` file from infrastructure deployment
+- [ ] **Deployment Outputs File**: Have `deployment_outputs.env` from infrastructure deployment
 
 :::warning Container Registry Access Required
 You must complete the Container Registry Access setup from the [Components Deployment Overview](./#repository-and-access) before proceeding. The script requires the `gcp-artifact-registry` pull secret to exist.
@@ -83,18 +83,18 @@ sed -i "s/%%AWS_S3_REGION%%/${AWS_S3_REGION}/g" codemie-api/values-aws.yaml
 
 ### Step 3: Configure Domain Name
 
-Update the domain name in remaining values files:
+Update the DNS zone name in the remaining values files:
 
 ```bash
-# Use your domain from deployment_outputs.env
-YOUR_DOMAIN="${CODEMIE_DOMAIN_NAME}"
+# Use your domain zone name from deployment_outputs.env
+CODEMIE_DOMAIN_NAME="airun.example.com"
 
 # Update all values-aws.yaml files
-find . -name "values-aws.yaml" -exec sed -i "s/codemie.example.com/$YOUR_DOMAIN/g" {} \;
+find . -name "values-aws.yaml" -exec sed -i "s/%%DOMAIN%%/${CODEMIE_DOMAIN_NAME}/g" {} \;
 ```
 
 :::tip Domain Configuration
-Your domain name was configured during infrastructure deployment. Find it in `deployment_outputs.env` as `CODEMIE_DOMAIN_NAME`.
+Your DNS zone name was configured during infrastructure deployment. Find it in `deployment_outputs.env` as `CODEMIE_DOMAIN_NAME`.
 :::
 
 ### Step 4: Authenticate to Container Registry
@@ -170,7 +170,7 @@ The following AWS-specific values must be configured in `codemie-api/values-aws.
 
 | Placeholder              | Description                   | Example Value                                    | Source File              |
 | ------------------------ | ----------------------------- | ------------------------------------------------ | ------------------------ |
-| `%%DOMAIN%%`             | Your domain name              | `example.com`                                    | `deployment_outputs.env` |
+| `%%DOMAIN%%`             | Your DNS Zone name            | `airun.example.com`                              | `deployment_outputs.env` |
 | `%%AWS_DEFAULT_REGION%%` | AWS region                    | `us-west-2`                                      | `deployment_outputs.env` |
 | `%%EKS_AWS_ROLE_ARN%%`   | IAM role for EKS IRSA         | `arn:aws:iam::0123456789012:role/AWSIRSA_AI_RUN` | `deployment_outputs.env` |
 | `%%AWS_KMS_KEY_ID%%`     | AWS KMS key ID for encryption | `50f3f093-dc86-48de-8f2d-7a76e480348c`           | `deployment_outputs.env` |
@@ -181,13 +181,13 @@ The following AWS-specific values must be configured in `codemie-api/values-aws.
 
 The following files require domain name configuration (automated by Step 3 in Quick Start):
 
-| Component        | File                            | Placeholder           | Example Value         |
-| ---------------- | ------------------------------- | --------------------- | --------------------- |
-| **Kibana**       | `kibana/values-aws.yaml`        | `codemie.example.com` | `codemie.example.com` |
-| **Keycloak**     | `keycloak-helm/values-aws.yaml` | `codemie.example.com` | `codemie.example.com` |
-| **OAuth2 Proxy** | `oauth2-proxy/values-aws.yaml`  | `codemie.example.com` | `codemie.example.com` |
-| **CodeMie UI**   | `codemie-ui/values-aws.yaml`    | `codemie.example.com` | `codemie.example.com` |
-| **CodeMie API**  | `codemie-api/values-aws.yaml`   | `codemie.example.com` | `codemie.example.com` |
+| Component        | File                            | Placeholder           | Example Value                |
+| ---------------- | ------------------------------- | --------------------- | ---------------------------- |
+| **Kibana**       | `kibana/values-aws.yaml`        | `kibana.%%DOMAIN%%`   | `kibana.airun.example.com`   |
+| **Keycloak**     | `keycloak-helm/values-aws.yaml` | `keycloak.%%DOMAIN%%` | `keycloak.airun.example.com` |
+| **OAuth2 Proxy** | `oauth2-proxy/values-aws.yaml`  | `*.%%DOMAIN%%`        | `*.airun.example.com`        |
+| **CodeMie UI**   | `codemie-ui/values-aws.yaml`    | `codemie.%%DOMAIN%%`  | `codemie.airun.example.com`  |
+| **CodeMie API**  | `codemie-api/values-aws.yaml`   | `*.%%DOMAIN%%`        | `*.airun.example.com`        |
 
 ## Next Steps
 
