@@ -14,13 +14,13 @@ import TabItem from '@theme/TabItem';
 
 ## What Changed
 
-| Area                               | AWS                                    | Azure                                      |
-| ---------------------------------- | -------------------------------------- | ------------------------------------------ |
-| Terraform                          | 1.5.7 → **1.13.5**                     | 1.5.7 → **1.13.5**                         |
-| Kubernetes (default value changed) | EKS 1.33 → **1.35** (upgrade optional) | AKS 1.33.5 → **1.34.2** (upgrade optional) |
-| State locking                      | DynamoDB → **S3 native**               | No changes                                 |
-| Provider versions                  | No changes                             | Updated, see below                         |
-| Terraform registry modules         | Updated, see below                     | No changes                                 |
+| Area                               | AWS                                    | Azure                                      | GCP                                                  |
+| ---------------------------------- | -------------------------------------- | ------------------------------------------ | ---------------------------------------------------- |
+| Terraform                          | 1.5.7 → **1.13.5**                     | 1.5.7 → **1.13.5**                         | 1.5.7 → **1.13.5**                                   |
+| Kubernetes (default value changed) | EKS 1.33 → **1.35** (upgrade optional) | AKS 1.33.5 → **1.34.2** (upgrade optional) | GKE 1.33 → **1.34.3** (upgrade optional)             |
+| State locking                      | DynamoDB → **S3 native**               | No changes                                 | No changes                                           |
+| Provider versions                  | No changes                             | Updated, see below                         | Google 6.46.0 → **7.21.0**, Random 3.7.2 → **3.8.1** |
+| Terraform registry modules         | Updated, see below                     | No changes                                 | Updated, see below                                   |
 
 ## How to Upgrade
 
@@ -188,6 +188,74 @@ terraform init -upgrade \
 
   </TabItem>
   </Tabs>
+
+  </TabItem>
+  <TabItem value="gcp" label="GCP">
+
+Google provider upgraded from **6.x to 7.x** (major version). All Terraform registry modules were updated for compatibility:
+
+| Module                                              | Old version | New version |
+| --------------------------------------------------- | ----------- | ----------- |
+| `terraform-google-modules/service-accounts/google`  | 4.5.4       | **4.7.0**   |
+| `terraform-google-modules/kms/google`               | 3.2.0       | **4.1.2**   |
+| `terraform-google-modules/network/google`           | 10.0.0      | **16.0.1**  |
+| `terraform-google-modules/cloud-nat/google`         | 5.3.0       | **7.0.0**   |
+| `terraform-google-modules/kubernetes-engine/google` | 35.0.1      | **43.0.0**  |
+| `terraform-google-modules/bastion-host/google`      | 8.0.0       | **9.0.0**   |
+| `terraform-google-modules/cloud-dns/google`         | 5.3.0       | **7.1.0**   |
+| `terraform-google-modules/sql-db/google`            | 25.2.2      | **27.2.0**  |
+
+:::info GKE upgrade is optional
+The default version changed to **1.34.3**, but you can keep the current version by pinning `kubernetes_version` in your `platform` config before applying.
+:::
+
+:::warning Bastion host will be recreated
+Only applies when `private_cluster = true`.
+
+bastion-host v9.0.0 adds `resource_manager_tags` support to the bastion compute instance ([#227](https://github.com/terraform-google-modules/terraform-google-bastion-host/pull/227)). This introduces a `params` block on `google_compute_instance_from_template`, which is marked as `ForceNew` in the Google provider — Terraform must destroy and recreate the VM.
+
+**To preserve files on the bastion disk**, disable auto-delete on the boot disk before applying:
+
+```bash
+gcloud compute instances set-disk-auto-delete <BASTION_NAME> \
+  --no-auto-delete \
+  --disk=<BASTION_NAME> \
+  --zone=<ZONE> \
+  --project=<PROJECT_ID>
+```
+
+For full details see the changelogs: [bastion-host v9.0.0](https://github.com/terraform-google-modules/terraform-google-bastion-host/blob/main/CHANGELOG.md#900-2025-09-23), [terraform-google-vm v13.0.0](https://github.com/terraform-google-modules/terraform-google-vm/blob/main/CHANGELOG.md#1300-2024-12-17).
+:::
+
+**Upgrade remote backend:**
+
+```bash
+cd codemie-terraform-gcp-remote-backend
+terraform init -upgrade
+terraform plan
+terraform apply
+```
+
+**Upgrade platform:**
+
+```bash
+cd codemie-terraform-gcp-platform
+terraform init -upgrade
+```
+
+```bash
+terraform plan
+```
+
+Review the plan output. You should see:
+
+- **1 resource replaced** — bastion VM (expected, see warning above)
+- **1 resource updated** — GKE master authorized networks (cascading from bastion IP change)
+- **Drift detection** on Cloud SQL, GKE cluster, and VPC — these are cosmetic (provider 7.x now tracks additional computed fields)
+
+```bash
+terraform apply
+```
 
   </TabItem>
   </Tabs>
