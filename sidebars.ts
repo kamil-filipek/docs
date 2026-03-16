@@ -724,6 +724,7 @@ const sidebars: SidebarsConfig = {
             'admin/update/terraform-upgrade/terraform-upgrade',
             'admin/update/oauth2-proxy-upgrade',
             'admin/update/elasticsearch-kibana-upgrade',
+            'admin/update/fluent-bit-upgrade',
           ],
         },
         {
