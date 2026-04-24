@@ -14,6 +14,41 @@ This page provides information about updated third-party components and configur
 ---
 
 <details>
+<summary><strong>CodeMie 2.24.0</strong></summary>
+
+**Release Date:** April 23, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.24.0)
+
+<h3>Third-Party Component Updates</h3>
+
+No third-party component updates in this release.
+
+<h3>Configuration Changes</h3>
+
+#### **[BREAKING]** Fluent Bit: Remove `span_id` and `trace_id` from Metrics Logs
+
+:::danger Breaking Change
+Without this configuration update, **no metrics will be written** to the `codemie_metrics_logs` Elasticsearch index. Apply this change before or during the upgrade to CodeMie 2.24.0.
+:::
+
+A new `[FILTER]` block must be added to `fluent-bit/values.yaml` to strip `span_id` and `trace_id` fields from CodeMie metrics logs before they are forwarded to Elasticsearch.
+
+**Why:** Starting with CodeMie 2.24.0, the backend includes `span_id` and `trace_id` fields in its log output. These fields are not accepted by the `codemie_metrics_logs` Elasticsearch index, causing all metrics ingestion to fail.
+
+**Required change in `fluent-bit/values.yaml`:**
+
+```ini
+[FILTER]
+    Name         record_modifier
+    Match        kube.codemie-metrics.*
+    Remove_key   span_id
+    Remove_key   trace_id
+```
+
+This filter is included in the updated `codemie-helm-charts`. No manual action is required if you are upgrading using the provided Helm charts.
+
+</details>
+
+<details>
 <summary><strong>CodeMie 2.23.0</strong></summary>
 
 **Release Date:** April 15, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.23.0)
