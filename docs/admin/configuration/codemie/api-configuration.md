@@ -299,9 +299,9 @@ Configuration for Google Cloud Storage backend (requires `FILES_STORAGE_TYPE=gcp
 
 ## Security & Encryption
 
-Protect sensitive data at rest using cloud key management services or HashiCorp Vault.
-
 ### Encryption Configuration
+
+Protect sensitive data at rest using cloud key management services or HashiCorp Vault.
 
 | Parameter         | Type   | Default   | Description                                                                                                                           |
 | ----------------- | ------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -351,6 +351,14 @@ Encrypt data using Vault's Transit secrets engine for centralized key management
 | `VAULT_NAMESPACE`           | string | `""`        | Vault namespace for multi-tenant deployments              |
 | `VAULT_TRANSIT_KEY_NAME`    | string | `"codemie"` | Transit engine key name for encryption                    |
 | `VAULT_TRANSIT_MOUNT_POINT` | string | `"transit"` | Mount path for Transit secrets engine                     |
+
+### Inter-process Communication
+
+Authenticate inter-process requests between FastAPI workers and pods.
+
+| Parameter           | Type   | Default | Description                                                                                                                                                                                                                          |
+| ------------------- | ------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `INTERNAL_BIND_KEY` | string | random  | Shared secret for authenticating internal requests between workers and pods. Defaults to a random value per worker — set explicitly to the same value across all workers and pod replicas to ensure webhook triggers work correctly. |
 
 ---
 

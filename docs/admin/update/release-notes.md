@@ -52,6 +52,30 @@ No third-party component updates in this release.
 
    **Upgrade instructions:** [Keycloak Theme Setup](keycloak/keycloak-theme-setup)
 
+#### New Environment Variable: `INTERNAL_BIND_KEY`
+
+A new `INTERNAL_BIND_KEY` environment variable has been introduced.
+It is a shared secret for inter-process communication.
+Without it, webhook trigger may fail when running multiple workers (`WORKERS > 1`) or multiple pod replicas.
+
+**If upgrading using Helm charts:**
+
+The updated Helm chart automatically creates a Kubernetes Secret with a random value for
+`INTERNAL_BIND_KEY`. No manual action is required for standard deployments.
+
+:::warning ArgoRollout deployments
+Automatic secret generation is skipped when `argoRollout` is enabled. Create the Kubernetes
+Secret manually and reference it via `security.processAuthSecret.name` and
+`security.processAuthSecret.field`.
+:::
+
+**If deploying without Helm charts:**
+
+Set `INTERNAL_BIND_KEY` to the same strong random value across all workers and pods.
+Generate with: `openssl rand -hex 32`. Store in a secrets manager or Kubernetes Secret.
+
+See [API Configuration](../configuration/codemie/api-configuration#inter-process-communication) for full details.
+
 </details>
 
 <details>
