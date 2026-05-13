@@ -14,6 +14,29 @@ This page provides information about updated third-party components and configur
 ---
 
 <details>
+<summary><strong>CodeMie 2.25.0</strong></summary>
+
+**Release Date:** May 8, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.25.0)
+
+<h3>Third-Party Component Updates</h3>
+
+No third-party component updates in this release.
+
+<h3>Configuration Changes</h3>
+
+No breaking configuration changes were introduced in this release.
+
+<h3>Known Issues</h3>
+
+:::warning Skip to 2.26.0 if using LiteLLM integration
+If your deployment has the **LiteLLM proxy integration enabled**, it is strongly recommended to **skip this version and upgrade directly to CodeMie 2.26.0**.
+
+Version 2.25.0 contains a known issue that causes instability in environments with LiteLLM configured. Upgrading to 2.26.0 resolves this issue.
+:::
+
+</details>
+
+<details>
 <summary><strong>CodeMie 2.24.0</strong></summary>
 
 **Release Date:** April 23, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.24.0)
