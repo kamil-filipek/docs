@@ -43,6 +43,29 @@ No third-party component updates in this release.
    See [Disable migration after the first run](../configuration/access-control/platform-managed-mode-configuration.md#22-disable-migration-after-the-first-run) for the full cleanup steps.
    :::
 
+3. **`LITELLM_PREMIUM_MODELS_ALIASES` format changed to JSON array** — if you use this variable, update its value from a comma-separated string to a JSON array.
+
+   :::warning Format change required
+   The previous comma-separated format is no longer supported. Update your `extraEnv` before upgrading:
+
+   ```yaml
+   # Before
+   - name: LITELLM_PREMIUM_MODELS_ALIASES
+     value: "opus,o1"
+
+   # After
+   - name: LITELLM_PREMIUM_MODELS_ALIASES
+     value: '["opus", "o1"]'
+   ```
+
+   :::
+
+4. **`LITELLM_PREMIUM_MODELS_BUDGET_NAME` removed** — this variable was deprecated and is no longer supported. Remove it from your `extraEnv` if still present.
+
+   :::tip Configuration housekeeping
+   The budget name is now derived automatically from the `budget_category: premium_models` entry in `budgets-config.yaml`. No replacement variable is needed.
+   :::
+
 </details>
 
 <details>
