@@ -14,6 +14,33 @@ This page provides information about updated third-party components and configur
 ---
 
 <details>
+<summary><strong>CodeMie 2.29.0</strong></summary>
+
+**Release Date:** May 22, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.29.0)
+
+<h3>Third-Party Component Updates</h3>
+
+No third-party component updates in this release.
+
+<h3>Configuration Changes</h3>
+
+1. **[BREAKING]** Ingress annotations removed from upstream Helm charts
+
+   :::danger Breaking Change
+   These annotations are no longer shipped as defaults in the Helm charts but are still required for oauth2-proxy authentication to work. Add them to the custom Helm values before upgrading to preserve this behavior.
+   :::
+
+   The following oauth2-proxy ingress annotations announced for removal in 2.28.0 have been removed from the default values of the **AI/Run CodeMie Backend** and **AI/Run CodeMie UI** Helm charts:
+
+   ```yaml
+   nginx.ingress.kubernetes.io/auth-response-headers: X-Auth-Request-Access-Token,Authorization
+   nginx.ingress.kubernetes.io/auth-signin: https://$host/oauth2/start?rd=$escaped_request_uri
+   nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy.svc.cluster.local:80/oauth2/auth
+   ```
+
+</details>
+
+<details>
 <summary><strong>CodeMie 2.28.0</strong></summary>
 
 **Release Date:** May 21, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.28.0)
@@ -34,8 +61,8 @@ No third-party component updates in this release.
 
 3. **Upcoming change: ingress annotations** — the following oauth2-proxy ingress annotations will be removed from the **AI/Run CodeMie Backend** and **AI/Run CodeMie UI** Helm charts in a future release:
 
-   :::warning Upcoming removal
-   These annotations will be removed in a future CodeMie release. Add them to the custom Helm values before upgrading to preserve this behavior.
+   :::warning Removed from default Helm chart values in 2.29.0
+   These annotations are no longer shipped as defaults in the Helm charts but are still required for oauth2-proxy authentication to work. Add them to the custom Helm values before upgrading to preserve this behavior.
 
    ```yaml
    nginx.ingress.kubernetes.io/auth-response-headers: X-Auth-Request-Access-Token,Authorization
