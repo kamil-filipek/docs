@@ -715,6 +715,7 @@ const sidebars: SidebarsConfig = {
                   items: [
                     'admin/configuration/access-control/user-authorization/assign-roles',
                     'admin/configuration/access-control/user-authorization/assign-attributes',
+                    'admin/configuration/access-control/user-authorization/configure-guest-mapper',
                   ],
                 },
               ],
@@ -764,7 +765,7 @@ const sidebars: SidebarsConfig = {
             id: 'admin/security/index',
           },
           collapsed: true,
-          items: ['admin/security/data-processing-storage'],
+          items: ['admin/security/data-processing-storage', 'admin/security/roles-rbac'],
         },
         {
           type: 'category',
