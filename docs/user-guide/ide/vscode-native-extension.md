@@ -53,9 +53,9 @@ The CodeMie Native VS Code extension provides a dedicated sidebar interface for 
 2. Clear extension cache in settings
 3. Reset login data through extension settings
 
-## Configure Claude Code extension to work through CodeMie proxy
+## Configure Claude Code extension to work through CodeMie plugin integration
 
-From version 0.1.22 there is an option to configure Claude Code VSCode extension to use Codemie as a proxy.
+From version 0.1.22 there is an option to configure Claude Code VSCode extension to use CodeMie plugin integration.
 This allows to use claude without Claude subscription and obtaining Anthropic API Key
 
 ### Prerequisites
@@ -72,7 +72,9 @@ This allows to use claude without Claude subscription and obtaining Anthropic AP
 
 ![Marketplace](./images/configure-claude-proxy.png)
 
-2. Open Claude Code extension and start working with it
+2. Open the Claude Code extension UI in VS Code and use it from the plugin sidebar/interface.
+
+   > Important: use the Claude Code **plugin UI**, not Claude Code **CLI mode**. The CodeMie plugin integration is intended for the VS Code extension experience.
 
 ![Marketplace](./images/claude-extension-usage.png)
 
