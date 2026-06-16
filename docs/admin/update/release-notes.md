@@ -24,7 +24,7 @@ No third-party component updates in this release.
 
 <h3>Configuration Changes</h3>
 
-No breaking configuration changes were introduced in this release.
+External Secrets Operator IRSA provisioning removed from AWS Terraform code.
 
 </details>
 
