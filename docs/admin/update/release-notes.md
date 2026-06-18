@@ -24,7 +24,9 @@ No third-party component updates in this release.
 
 <h3>Configuration Changes</h3>
 
-External Secrets Operator IRSA provisioning removed from AWS Terraform code.
+1. External Secrets Operator IRSA provisioning removed from AWS Terraform code.
+
+2. SSH key pair module and its usage in the EKS cluster configuration removed from AWS Terraform code.
 
 </details>
 
