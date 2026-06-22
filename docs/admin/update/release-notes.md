@@ -24,7 +24,22 @@ No third-party component updates in this release.
 
 <h3>Configuration Changes</h3>
 
-No breaking configuration changes were introduced in this release.
+1. **`security.processAuthSecret` removed from AI/Run CodeMie Backend Helm chart** — the static shared-secret approach for inter-process authentication (`INTERNAL_BIND_KEY`) has been replaced with per-request HMAC signing. The key is now generated in-memory at pod startup and no Kubernetes Secret is needed.
+
+   :::tip Configuration housekeeping
+   If the **AI/Run CodeMie Backend** Helm chart values still contain `security.processAuthSecret`, it can be safely removed:
+
+   ```yaml
+   # Remove the following block from your custom Helm values:
+   security:
+     processAuthSecret:
+       create: false
+       name: "internal-bind-key"
+       field: "bind-key"
+   ```
+
+   If you created a Kubernetes Secret for `INTERNAL_BIND_KEY` manually (e.g. for ArgoRollout deployments), it can also be safely deleted.
+   :::
 
 </details>
 
@@ -364,7 +379,7 @@ Updated from 1.81.0. For details, see the [LiteLLM 1.83.7 Release Notes ↗](htt
    Set `INTERNAL_BIND_KEY` to the same strong random value across all workers and pods.
    Generate with: `openssl rand -hex 32`. Store in a secrets manager or Kubernetes Secret.
 
-   See [API Configuration](../configuration/codemie/api-configuration.md#inter-process-communication) for full details.
+   See [API Configuration](../configuration/codemie/api-configuration.md) for full details.
 
 <h3>Hotfixes</h3>
 
