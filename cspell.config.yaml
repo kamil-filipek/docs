@@ -62,6 +62,8 @@ words:
   - IRSA
   - rollouts
   # AWS
+  - AgentCore
+  - agentcore
   - IMDS
   - EKS
   - S3
