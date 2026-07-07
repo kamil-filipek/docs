@@ -16,7 +16,7 @@ import FeatureGrid from '@site/src/components/FeatureGrid';
 
 Welcome to the AI/Run CodeMie deployment guides. Choose your cloud provider to get started with deploying CodeMie in your environment.
 
-## Public Cloud Providers
+## Kubernetes Deployments
 
 <FeatureGrid>
   <FeatureCard
@@ -25,7 +25,7 @@ Welcome to the AI/Run CodeMie deployment guides. Choose your cloud provider to g
     invertInDarkTheme={false}
     title="AWS Deployment Guide"
     description="Deploy AI/Run CodeMie on AWS with comprehensive guides covering infrastructure setup, components, and configuration."
-    link="/admin/deployment/aws/overview"
+    link="/admin/deployment/aws/kubernetes/overview"
   />
   <FeatureCard
     icon="/img/cloud-providers/gcp.svg"
@@ -33,7 +33,7 @@ Welcome to the AI/Run CodeMie deployment guides. Choose your cloud provider to g
     invertInDarkTheme={false}
     title="GCP Deployment Guide"
     description="Deploy AI/Run CodeMie on Google Cloud Platform using Terraform and Helm with automated or manual installation options."
-    link="/admin/deployment/gcp/overview"
+    link="/admin/deployment/gcp/kubernetes/overview"
   />
   <FeatureCard
     icon="/img/cloud-providers/azure.svg"
@@ -41,8 +41,42 @@ Welcome to the AI/Run CodeMie deployment guides. Choose your cloud provider to g
     invertInDarkTheme={false}
     title="Azure Deployment Guide"
     description="Deploy AI/Run CodeMie on Microsoft Azure with step-by-step guidance for infrastructure and application deployment."
-    link="/admin/deployment/azure/overview"
+    link="/admin/deployment/azure/kubernetes/overview"
   />
+</FeatureGrid>
+
+## VM Deployments
+
+<FeatureGrid>
+  <FeatureCard
+    icon="/img/cloud-providers/aws.svg"
+    iconType="image"
+    invertInDarkTheme={false}
+    title="AWS On VM Deployment"
+    description="Deploy AI/Run CodeMie on a single EC2 instance with Docker Compose. Ideal for PoC and demo environments."
+    link="/admin/deployment/aws/on-vm/overview"
+  />
+  <FeatureCard
+    icon="/img/cloud-providers/gcp.svg"
+    iconType="image"
+    invertInDarkTheme={false}
+    title="GCP On VM Deployment"
+    description="Deploy AI/Run CodeMie on a single GCE VM with Docker Compose. Ideal for PoC and demo environments."
+    link="/admin/deployment/gcp/on-vm/overview"
+  />
+  <FeatureCard
+    icon="/img/cloud-providers/azure.svg"
+    iconType="image"
+    invertInDarkTheme={false}
+    title="Azure On VM Deployment"
+    description="Deploy AI/Run CodeMie on a single Azure VM with Docker Compose. Ideal for PoC and demo environments."
+    link="/admin/deployment/azure/on-vm/overview"
+  />
+</FeatureGrid>
+
+## Marketplace
+
+<FeatureGrid>
   <FeatureCard
     icon="/img/cloud-providers/aws.svg"
     iconType="image"

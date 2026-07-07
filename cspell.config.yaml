@@ -82,16 +82,21 @@ words:
   - NACLs
   - xlarge
   - AWSIRSA
+  - envsubst
+  - superadmin
   # GCP
   - GCP
   - GKE
+  - GCE
   - gcloud
   - gsutil
   - anthos
   - t1iylu
   - aiplatform
   - cloudkms
+  - secretmanager
   - Stackdriver
+  - highmem
   # Azure
   - AKS
   - Azure
