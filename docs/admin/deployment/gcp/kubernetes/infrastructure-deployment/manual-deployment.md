@@ -4,7 +4,7 @@ title: Manual Infrastructure Deployment
 sidebar_label: Manual Deployment
 sidebar_position: 2
 pagination_prev: admin/deployment/gcp/kubernetes/infrastructure-deployment/infrastructure-deployment-overview
-pagination_next: admin/deployment/gcp/kubernetes/components-deployment/components-deployment-overview
+pagination_next: admin/deployment/gcp/kubernetes/infrastructure-deployment/infrastructure-bastion-host-access
 ---
 
 import Tabs from '@theme/Tabs';
@@ -202,6 +202,11 @@ create_private_dns_zone = false               # Set to true if using private DNS
 keycloak_db_config = { enabled = true }
 langfuse_db_config = { enabled = false }
 litellm_db_config  = { enabled = false }
+
+# Optional: Dedicated Cloud Memorystore Redis Instance
+# Set enabled = true to provision a Memorystore Redis instance for caching.
+# Supported fields: enabled, tier (BASIC|STANDARD_HA), memory_size_gb, redis_version.
+codemie_cache_config = { enabled = false }
 ```
 
 :::info Configuration References
@@ -250,144 +255,16 @@ gcloud sql instances list --project=<your-project-id>
 - Keycloak Cloud SQL details (`keycloak_pg_host`, `keycloak_pg_database`, `keycloak_pg_user`, `keycloak_pg_secret_name`) — present when `keycloak_db_config.enabled = true`
 - LiteLLM Cloud SQL details (`litellm_pg_host`, `litellm_pg_database`, `litellm_pg_user`, `litellm_pg_secret_name`) — present when `litellm_db_config.enabled = true`
 - Langfuse Cloud SQL details (`langfuse_pg_host`, `langfuse_pg_database`, `langfuse_pg_user`, `langfuse_pg_secret_name`) — present when `langfuse_db_config.enabled = true`
+- Cache details (`codemie_cache_address`, `codemie_cache_secret`) — present when `codemie_cache_config.enabled = true`
 - Service account information
 
 :::tip Infrastructure Ready
 The GCP infrastructure deployment is now complete. You can proceed to configure cluster access or continue with components deployment.
 :::
 
-## Bastion Host Access Configuration (Optional)
-
-:::warning Private Cluster Only
-This section is only required if you deployed a **completely private GKE cluster** with private DNS. For public clusters or clusters with authorized networks configured, you can access the GKE API and CodeMie application directly from your workstation.
-:::
-
-The Bastion Host is a secure jump server that provides access to your private GKE cluster and applications running inside the VPC. This VM enables both command-line management (SSH) and browser-based access (RDP) to internal resources.
-
-### Connection Methods Overview
-
-| Connection Type | Use Case                                                      | Access Method         |
-| --------------- | ------------------------------------------------------------- | --------------------- |
-| **SSH**         | Deploy and manage Kubernetes workloads using kubectl and Helm | Terminal/SSH client   |
-| **RDP**         | Access web UIs exposed via private DNS (Kibana, Keycloak)     | Remote Desktop client |
-
-### Option 1: SSH Connection for Cluster Management
-
-Use SSH to connect to the Bastion Host for deploying and managing Kubernetes resources.
-
-1. Retrieve the SSH command from Terraform outputs and connect:
-
-```bash
-# Get the SSH connection command
-terraform output bastion_ssh_command
-
-# Example output:
-# gcloud compute ssh bastion-vm --project=your-project --zone=europe-west3-a
-
-# Use this command to connect
-gcloud compute ssh bastion-vm --project=your-project --zone=europe-west3-a
-```
-
-:::tip IAM Permissions
-Ensure your user account is listed in `bastion_members` variable from Phase 2 configuration. Only authorized users can SSH into the Bastion Host.
-:::
-
-#### Step 2: Set user password (Required for RDP)
-
-After connecting via SSH, set a password for the `ubuntu` user for later RDP access:
-
-```bash
-# Set password for the ubuntu user (you'll be prompted to enter it twice)
-sudo passwd ubuntu
-```
-
-:::info Save Your Password
-The `ubuntu` user password you set here will be used to login via RDP. Make sure to remember it or store it securely.
-:::
-
-3. Fetch GKE cluster credentials to enable kubectl commands:
-
-```bash
-# Get the kubectl configuration command
-terraform output get_kubectl_credentials_for_private_cluster
-
-# Example output:
-# gcloud container clusters get-credentials your-cluster-name --region=europe-west3 --project=your-project
-
-# Run the command to configure kubectl
-gcloud container clusters get-credentials your-cluster-name --region=europe-west3 --project=your-project
-```
-
-4. Clone the Helm charts repository needed for component deployment:
-
-```bash
-git clone https://gitbud.epam.com/epm-cdme/codemie-helm-charts.git
-cd codemie-helm-charts
-```
-
-You're now ready to proceed with [Components Deployment](../components-deployment/index.md).
-
-### Option 2: RDP Connection for Web UI Access
-
-Use RDP to access application web interfaces that are only available via private DNS (such as Kibana, Keycloak Admin Console).
-
-:::tip When to Use RDP
-RDP is useful when you need to access web-based administrative interfaces that aren't exposed publicly. For kubectl/Helm operations, SSH access is sufficient.
-:::
-
-1. Retrieve the RDP forwarding command from Terraform outputs and start the IAP tunnel:
-
-```bash
-# Get the RDP forwarding command
-terraform output bastion_rdp_command
-
-# Example output:
-# gcloud compute start-iap-tunnel bastion-vm 3389 --local-host-port=localhost:3389 --zone=europe-west3-a --project=your-project
-```
-
-Run the command to create an IAP tunnel that forwards RDP traffic (keep this terminal open):
-
-```bash
-gcloud compute start-iap-tunnel bastion-vm 3389 \
-  --local-host-port=localhost:3389 \
-  --zone=europe-west3-a \
-  --project=your-project
-```
-
-2. Open your Remote Desktop client and connect:
-
-| Setting      | Value                      |
-| ------------ | -------------------------- |
-| **Computer** | `localhost:3389`           |
-| **Username** | `ubuntu`                   |
-| **Password** | Password set in SSH Step 2 |
-
-### Tips for Using the Bastion Host
-
-#### Pasting Commands into Terminal
-
-Use the correct keyboard shortcut for pasting in Linux terminal:
-
-```
-Shift + Ctrl + V
-```
-
-(Regular `Ctrl + V` won't work in most Linux terminal applications)
-
-#### File Transfer to/from Bastion
-
-Transfer files between your local machine and Bastion using `gcloud scp`:
-
-```bash
-# Upload file to Bastion
-gcloud compute scp local-file.txt bastion-vm:~/remote-file.txt \
-  --project=your-project --zone=europe-west3-a
-
-# Download file from Bastion
-gcloud compute scp bastion-vm:~/remote-file.txt ./local-file.txt \
-  --project=your-project --zone=europe-west3-a
-```
-
 ## Next Steps
 
-After successful infrastructure deployment, proceed to [Components Deployment](../components-deployment/index.md) to install AI/Run CodeMie application components.
+After successful infrastructure deployment:
+
+- **Private GKE cluster with private DNS** — proceed to [Bastion Host Access Configuration](./bastion-host-access.md) to set up secure access before deploying components.
+- **Public cluster or authorized networks** — proceed directly to [Components Deployment](../components-deployment/index.md).
