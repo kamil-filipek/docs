@@ -13,6 +13,34 @@ This page provides information about updated third-party components and configur
 
 ---
 
+### CodeMie 2.38.0 {#v2-38-0}
+
+<details>
+<summary>Release details</summary>
+
+**Release Date:** July 9, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.38.0)
+
+<h3>Third-Party Component Updates</h3>
+
+No third-party component updates in this release.
+
+<h3>Configuration Changes</h3>
+
+1. **Google Docs data source (Google OAuth)** — to use the Google Docs data source, you now need to:
+   - Set the `GOOGLE_OAUTH_CLIENT_ID` / `GOOGLE_OAUTH_CLIENT_SECRET` environment variables with your Google OAuth client credentials.
+   - Enable the **Google Docs API** for the OAuth client's project in Google Cloud Console.
+2. **Code Executor is disabled by default** — set `CODE_EXECUTOR_ENABLED=true` to opt in; while disabled, the tool is neither listed in the tools catalog nor executed.
+3. **`AUTHORIZED_APPS_ALLOWED_KEY_DOMAINS` required for Authorized Applications** — set it to the list of domains allowed to host `public_key_url` keys before relying on your Authorized Applications configuration. Requests referencing a `public_key_url` on a domain not in the allowlist are rejected.
+
+<h3>Other Improvements</h3>
+
+This release also delivers a set of security and hardening improvements across the CodeMie platform.
+
+- Removed the local mode of Code Executor; the sandboxed Code Executor tool is now disabled by default and must be explicitly enabled via `CODE_EXECUTOR_ENABLED`.
+- Hardened Authorized Applications by validating `public_key_url` domains against an explicit allowlist (`AUTHORIZED_APPS_ALLOWED_KEY_DOMAINS`).
+
+</details>
+
 ### CodeMie 2.37.0 {#v2-37-0}
 
 <details>
