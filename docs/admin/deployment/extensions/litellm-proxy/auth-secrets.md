@@ -107,6 +107,24 @@ _Required only if you plan to use models from Google Vertex AI._
 
 If you select **GCP** as your cloud provider during the automated installation, you must provide credentials for Vertex AI.
 
+### Option 1: GKE Workload Identity Federation (Recommended)
+
+This method binds the LiteLLM Kubernetes service account to a Google Service Account via Workload Identity Federation, avoiding the need to store a static `key.json` credential.
+
+:::info
+
+No manual key is required. `helm-charts.sh` automatically sets `litellm-helm.serviceAccount.annotations.iam\.gke\.io\/gcp-service-account` and `litellm-helm.serviceAccount.name` from the `GOOGLE_SERVICE_ACCOUNT_EMAIL` and `LITELLM_KSA_NAME` values in `deployment_outputs.env`, which are produced by the Terraform deployment.
+
+:::
+
+During the script's execution, you will be prompted to enter the following value:
+
+- `VERTEX_PROJECT`: Your Google Cloud project ID where Vertex AI is enabled.
+
+### Option 2: Static Service Account Key (Legacy)
+
+Use this method only if Workload Identity Federation is not available in your environment.
+
 :::info
 
 **Prerequisite:** Before running the script, ensure a valid `gcp-service-account.json` file is present in the root of the repository. This file is necessary for authentication.

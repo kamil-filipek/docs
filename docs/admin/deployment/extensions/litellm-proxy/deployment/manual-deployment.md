@@ -89,9 +89,11 @@ Admin credentials can be found in `deployment_outputs.env` — use `CODEMIE_POST
 
 Refer to [Cloud Provider Authentication](../auth-secrets.md) for details on obtaining these credentials.
 
-**4. Vertex AI Secret (GCP only)**
+**4. Vertex AI Secret (GCP only, Option 2 / legacy)**
 
-Create a secret with credentials for Vertex AI:
+If you are using [GKE Workload Identity Federation](../auth-secrets.md) (recommended), skip this step — no secret is needed.
+
+Only if you are using a static service account key, create a secret with credentials for Vertex AI:
 
 ```bash
 kubectl -n litellm create secret generic litellm-google-service-account \
@@ -108,9 +110,12 @@ export VERTEX_PROJECT=<your project name>
 
 # Create the ConfigMap
 kubectl -n litellm create configmap litellm-vertex-ai \
-  --from-literal=VERTEX_PROJECT="$VERTEX_PROJECT" \
-  --from-literal=GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-service-account.json"
+  --from-literal=VERTEX_PROJECT="$VERTEX_PROJECT"
 ```
+
+:::info
+On the Workload Identity Federation path, only `VERTEX_PROJECT` is needed. Add `--from-literal=GOOGLE_APPLICATION_CREDENTIALS="/secrets/gcp-service-account.json"` only if you are using the legacy static key from Step 4.
+:::
 
 ## Step 5.3: Deploy the LiteLLM Helm Chart
 

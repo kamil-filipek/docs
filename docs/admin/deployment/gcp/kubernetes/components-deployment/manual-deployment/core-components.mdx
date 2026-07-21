@@ -48,19 +48,9 @@ kubectl get secret elasticsearch-master-credentials -n elastic -o yaml | \
   kubectl apply -n codemie -f -
 ```
 
-### Step 3: Create Google Service Account Secret
+### Step 3: Workload Identity Federation
 
-Create the secret with the GCP service account key for Vertex AI and KMS access:
-
-```bash
-kubectl create secret generic google-service-account \
-  --namespace codemie \
-  --from-file=gcp-service-account.json=codemie-gsa-key.json
-```
-
-:::warning Service Account Key
-Ensure the `codemie-gsa-key.json` file exists in your current directory. This key was created during the Getting Started steps and grants access to Vertex AI and Cloud KMS.
-:::
+No manual secret is required. CodeMie API accesses Vertex AI and Cloud KMS via Workload Identity Federation: the `serviceAccount.annotations.iam\.gke\.io\/gcp-service-account` and `serviceAccount.name` Helm values are set from the `GOOGLE_SERVICE_ACCOUNT_EMAIL` and `CODEMIE_API_KSA_NAME` values in `deployment_outputs.env` when installing the Helm chart in the next step.
 
 ### Step 4: Install CodeMie API Helm Chart
 

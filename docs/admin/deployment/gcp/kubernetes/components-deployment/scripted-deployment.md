@@ -109,23 +109,9 @@ sed -i "s/%%GOOGLE_KMS_PROJECT_ID%%/$PROJECT_ID/g" codemie-api/values-gcp.yaml
 sed -i "s/%%GOOGLE_KMS_REGION%%/$REGION/g" codemie-api/values-gcp.yaml
 ```
 
-### Step 3: Create Service Account Key
+### Step 3: Workload Identity Federation
 
-Create a service account key for Kubernetes to access GCP services:
-
-1. Access "IAM & Admin" in Google Cloud Console
-2. Locate the "codemie-gsa" service account (created by Terraform)
-3. Create a new JSON key for this service account
-4. Download and save the key file to `codemie-helm-charts/codemie-gsa-key.json`
-
-```bash
-# Verify the key file exists
-ls -la codemie-gsa-key.json
-```
-
-:::warning Key Security
-Keep this service account key secure. It grants access to GCP resources including Vertex AI and Cloud KMS.
-:::
+No manual service account key is required. The `codemie-gsa` service account created by Terraform is bound to the CodeMie API and LiteLLM Kubernetes ServiceAccounts via Workload Identity Federation. The bindings and the `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `CODEMIE_API_KSA_NAME`, and `LITELLM_KSA_NAME` values are written to `deployment_outputs.env` by the Terraform deployment, and `helm-charts.sh` applies them automatically when deploying each Helm release.
 
 ### Step 4: Configure LoadBalancer Type (Private vs Public)
 

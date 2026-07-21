@@ -76,12 +76,13 @@ Some components like Cloud Storage buckets or public DNS zones may be optional d
 
 ### Security & Identity
 
-| Resource                   | Purpose                                                                       |
-| -------------------------- | ----------------------------------------------------------------------------- |
-| **Cloud KMS Key**          | Encryption key for encrypting and decrypting sensitive data in AI/Run CodeMie |
-| **Service Accounts**       | Identity for accessing GCP services (Vertex AI, Cloud Storage, etc.)          |
-| **IAM Role Bindings**      | Role-based access control for service accounts                                |
-| **Private Service Access** | Secure, private network access to Cloud SQL                                   |
+| Resource                         | Purpose                                                                                                                                                              |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Cloud KMS Key**                | Encryption key for encrypting and decrypting sensitive data in AI/Run CodeMie                                                                                        |
+| **Service Accounts**             | Identity for accessing GCP services (Vertex AI, Cloud Storage, etc.)                                                                                                 |
+| **IAM Role Bindings**            | Role-based access control for service accounts                                                                                                                       |
+| **Workload Identity Federation** | Binds Kubernetes ServiceAccounts (CodeMie API, LiteLLM) to the CodeMie GSA via `roles/iam.workloadIdentityUser`, removing the need for static `key.json` credentials |
+| **Private Service Access**       | Secure, private network access to Cloud SQL                                                                                                                          |
 
 ## Terraform Modules
 
