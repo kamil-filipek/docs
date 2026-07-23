@@ -13,6 +13,39 @@ This page provides information about updated third-party components and configur
 
 ---
 
+### CodeMie 2.41.0 {#v2-41-0}
+
+<details>
+<summary>Release details</summary>
+
+**Release Date:** July 23, 2026 · [GitHub Tag ↗](https://github.com/codemie-ai/codemie/releases/tag/2.41.0)
+
+<h3>Third-Party Component Updates</h3>
+
+No third-party component updates in this release.
+
+<h3>Configuration Changes</h3>
+
+1. **[BREAKING]** GCP: Migrate to Workload Identity Federation, remove static GSA key
+
+   :::danger Breaking Change
+   This release removes the `GOOGLE_APPLICATION_CREDENTIALS` environment variable and mounted `key.json` volume from the CodeMie API and LiteLLM pods on GCP. Existing GCP deployments **must** re-run `gcp-terraform.sh` and `helm-charts.sh` as part of the upgrade, or pods will fail to authenticate to Vertex AI, Cloud Storage, and Cloud KMS.
+   :::
+
+   CodeMie API and LiteLLM on GCP now authenticate to Google Cloud services (Vertex AI, Cloud Storage, Cloud KMS) via **Workload Identity Federation** instead of a static Google Service Account key (`key.json`). Terraform binds the CodeMie GSA to the `codemie` and `litellm` Kubernetes ServiceAccounts via `roles/iam.workloadIdentityUser`, and the Helm charts annotate those ServiceAccounts with `iam.gke.io/gcp-service-account` instead of mounting a key file.
+
+   **Why:** Removes a long-lived, downloadable credential from the cluster, reducing the blast radius of a compromised pod and aligning GCP with the IRSA/Workload Identity approach already used on AWS and Azure.
+
+   **Required change:** Re-run `gcp-terraform.sh` to provision the new `google_service_account_iam_member` bindings, then re-run `helm-charts.sh` — it now reads `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `CODEMIE_API_KSA_NAME`, and `LITELLM_KSA_NAME` from `deployment_outputs.env` and passes them to the charts automatically. No manual GSA key creation, secret mounting, or `GOOGLE_APPLICATION_CREDENTIALS` configuration is required.
+
+   :::info No action for new deployments
+   New GCP deployments provision Workload Identity automatically end-to-end. This step only applies when upgrading an existing GCP deployment that still relies on a mounted `key.json`.
+   :::
+
+   See [GCP Infrastructure Deployment](../deployment/gcp/kubernetes/infrastructure-deployment/index.md) for details.
+
+</details>
+
 ### CodeMie 2.40.0 {#v2-40-0}
 
 <details>
